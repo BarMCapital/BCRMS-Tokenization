@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "title": "COGSRecord",
+  "description": "Cost of Goods Sold record for daily or monthly BRRMS normalization.",
+  "type": "object",
+  "properties": {
+    "businessId": {
+      "type": "string",
+      "description": "BAR M internal business identifier."
+    },
+    "date": {
+      "type": "string",
+      "format": "date",
+      "description": "Applicable date (YYYY-MM-DD)."
+    },
+    "category": {
+      "type": "string",
+      "description": "Category of COGS (e.g., 'Supplies', 'Consumables', 'Ingredients')."
+    },
+    "description": {
+      "type": "string",
+      "description": "Optional detail about the COGS item."
+    },
+    "amount": {
+      "type": "number",
+      "description": "Monetary amount of the COGS item."
+    },
+    "currency": {
+      "type": "string",
+      "default": "USD"
+    },
+    "sourceSystem": {
+      "type": "string",
+      "description": "Origin of this record (QuickBooks, manual entry, etc.)"
+    },
+    "ingestedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp when BRRMS ingested this COGS record."
+    }
+  },
+  "required": ["businessId", "date", "category", "amount", "sourceSystem", "ingestedAt"],
+  "additionalProperties": false
+}
