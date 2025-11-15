@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "title": "RiskEvent",
+  "description": "Risk detection event inside BAR M's insurance layer. These events trigger coverage logic or capital reserve actions.",
+  "type": "object",
+  "properties": {
+    "eventId": {
+      "type": "string",
+      "description": "Unique identifier for the risk event."
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Time the risk event was detected."
+    },
+    "sourceSystem": {
+      "type": "string",
+      "description": "Which subsystem detected the risk (BRRMS, StripeAdapter, Orchestrator, SmartContractIndex, etc.)."
+    },
+    "riskType": {
+      "type": "string",
+      "enum": [
+        "SMART_CONTRACT_FAILURE",
+        "DATA_MISMATCH",
+        "PROCESSOR_DOWNTIME",
+        "GROSS_TO_NET_ANOMALY",
+        "UNUSUAL_REFUNDS",
+        "GOVERNANCE_DISPUTE",
+        "MEDICAL_PROVIDER_UNAVAILABLE",
+        "API_AUTH_FAILURE",
+        "HASH_MISMATCH",
+        "ORCHESTRATION_FAILURE"
+      ],
+      "description": "Category of risk detected."
+    },
+    "severity": {
+      "type": "string",
+      "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"],
+      "description": "Severity of the risk event."
+    },
+    "details": {
+      "type": "object",
+      "description": "Additional metadata about the risk event.",
+      "additionalProperties": true
+    },
+    "requiresAction": {
+      "type": "boolean",
+      "description": "Indicates whether an insurance trigger or reserve action should occur."
+    }
+  },
+  "required": [
+    "eventId",
+    "timestamp",
+    "sourceSystem",
+    "riskType",
+    "severity",
+    "details"
+  ],
+  "additionalProperties": false
+}
