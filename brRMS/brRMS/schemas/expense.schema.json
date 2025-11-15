@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "title": "ExpenseRecord",
+  "description": "General operating expense record used in BRRMS financial normalization.",
+  "type": "object",
+  "properties": {
+    "businessId": {
+      "type": "string"
+    },
+    "date": {
+      "type": "string",
+      "format": "date"
+    },
+    "category": {
+      "type": "string",
+      "description": "Expense category (e.g., Rent, Utilities, Payroll, Insurance)."
+    },
+    "subcategory": {
+      "type": "string",
+      "description": "Optional subcategory (e.g., Software, Legal, Merchant Fees)."
+    },
+    "description": {
+      "type": "string"
+    },
+    "amount": {
+      "type": "number"
+    },
+    "currency": {
+      "type": "string",
+      "default": "USD"
+    },
+    "sourceSystem": {
+      "type": "string",
+      "description": "Origin of this record (QuickBooks, Square, bank feed, etc.)."
+    },
+    "ingestedAt": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": ["businessId", "date", "category", "amount", "sourceSystem", "ingestedAt"],
+  "additionalProperties": false
+}
