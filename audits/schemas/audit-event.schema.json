@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "title": "AuditEvent",
+  "description": "BAR M Capital audit event structure for compliance, traceability, and SEC/FINRA reporting.",
+  "type": "object",
+  "properties": {
+    "eventId": {
+      "type": "string",
+      "description": "Unique identifier for this audit event (UUID or hash)."
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this event occurred."
+    },
+    "actor": {
+      "type": "string",
+      "description": "System, module, or human responsible for the event. Examples: 'StripeAdapter', 'BRRMS', 'Orchestrator', 'RevenueAnchor.sol'"
+    },
+    "eventType": {
+      "type": "string",
+      "description": "Category of event.",
+      "enum": [
+        "INGESTION",
+        "NORMALIZATION",
+        "HASH_GENERATION",
+        "ANCHOR_ONCHAIN",
+        "SMART_CONTRACT_EXECUTION",
+        "ERROR",
+        "ACCESS",
+        "POLICY_CHANGE"
+      ]
+    },
+    "eventData": {
+      "type": "object",
+      "description": "Structured event metadata (businessId, date, hash, etc.)",
+      "additionalProperties": true
+    },
+    "signature": {
+      "type": "string",
+      "description": "Optional cryptographic signature for high-assurance events."
+    }
+  },
+  "required": ["eventId", "timestamp", "actor", "eventType", "eventData"],
+  "additionalProperties": false
+}
