@@ -1,44 +1,121 @@
 {
-  "$schema": "https://json-schema.org/draft-07/schema#",
-  "title": "COGSRecord",
-  "description": "Cost of Goods Sold record for daily or monthly BRRMS normalization.",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "BRRMS COGS Schema",
+  "description": "Deterministic Cost-of-Goods-Sold structure used by BAR M BRRMS. No subjective or capacious terminology permitted.",
   "type": "object",
+
   "properties": {
+    "cogsId": {
+      "type": "string",
+      "description": "Unique identifier for this COGS record."
+    },
+
     "businessId": {
       "type": "string",
-      "description": "BAR M internal business identifier."
+      "description": "ID of the business to which these COGS apply."
     },
-    "date": {
-      "type": "string",
-      "format": "date",
-      "description": "Applicable date (YYYY-MM-DD)."
-    },
-    "category": {
-      "type": "string",
-      "description": "Category of COGS (e.g., 'Supplies', 'Consumables', 'Ingredients')."
-    },
-    "description": {
-      "type": "string",
-      "description": "Optional detail about the COGS item."
-    },
-    "amount": {
-      "type": "number",
-      "description": "Monetary amount of the COGS item."
-    },
-    "currency": {
-      "type": "string",
-      "default": "USD"
-    },
-    "sourceSystem": {
-      "type": "string",
-      "description": "Origin of this record (QuickBooks, manual entry, etc.)"
-    },
-    "ingestedAt": {
+
+    "timestamp": {
       "type": "string",
       "format": "date-time",
-      "description": "Timestamp when BRRMS ingested this COGS record."
+      "description": "UTC timestamp for when these costs were recorded."
+    },
+
+    "category": {
+      "type": "string",
+      "enum": [
+        "RAW_MATERIAL",
+        "SUPPLIES",
+        "LABOR_DIRECT",
+        "FULFILLMENT",
+        "MERCHANT_FEES",
+        "MANUFACTURING_OVERHEAD",
+        "DISTRIBUTION",
+        "OTHER_DIRECT"
+      ],
+      "description": "Enumerated COGS category. No free-text or interpretive labels allowed."
+    },
+
+    "amount": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Cost amount in USD for this line item."
+    },
+
+    "expectedAmount": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Deterministic expected COGS value for this category based on predefined formulae or historical ranges."
+    },
+
+    "deltaBasisPoints": {
+      "type": "integer",
+      "description": "Difference between amount and expectedAmount in basis points."
+    },
+
+    "varianceFlag": {
+      "type": "string",
+      "enum": [
+        "WITHIN_TOLERANCE",
+        "MINOR_VARIANCE",
+        "MAJOR_VARIANCE"
+      ],
+      "description": "Variance classification based solely on deltaBasisPoints thresholds."
+    },
+
+    "varianceThresholds": {
+      "type": "object",
+      "description": "Explicit thresholds defining minor and major variance in basis points.",
+      "properties": {
+        "minorVarianceBps": {
+          "type": "integer",
+          "description": "Threshold for minor variance in basis points."
+        },
+        "majorVarianceBps": {
+          "type": "integer",
+          "description": "Threshold for major variance in basis points."
+        }
+      },
+      "required": [
+        "minorVarianceBps",
+        "majorVarianceBps"
+      ]
+    },
+
+    "source": {
+      "type": "string",
+      "enum": [
+        "API_IMPORT",
+        "MANUAL_ENTRY",
+        "SYSTEM_GENERATED",
+        "SMART_CONTRACT_EVENT"
+      ],
+      "description": "Origin of the COGS record. Enumerated for deterministic auditability."
+    },
+
+    "auditState": {
+      "type": "string",
+      "enum": [
+        "PENDING",
+        "VERIFIED",
+        "FLAGGED",
+        "FAILED_VERIFICATION"
+      ],
+      "description": "Auditing state for deterministic audit workflows. No subjective qualifiers allowed."
     }
   },
-  "required": ["businessId", "date", "category", "amount", "sourceSystem", "ingestedAt"],
-  "additionalProperties": false
+
+  "required": [
+    "cogsId",
+    "businessId",
+    "timestamp",
+    "category",
+    "amount",
+    "expectedAmount",
+    "deltaBasisPoints",
+    "varianceFlag",
+    "varianceThresholds",
+    "source",
+    "auditState"
+  ]
 }
