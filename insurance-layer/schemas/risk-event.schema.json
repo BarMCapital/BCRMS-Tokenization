@@ -1,60 +1,113 @@
 {
   "$schema": "https://json-schema.org/draft-07/schema#",
   "title": "RiskEvent",
-  "description": "Risk detection event inside BAR M's insurance layer. These events trigger coverage logic or capital reserve actions.",
+  "description": "Deterministic risk detection event inside BAR M's insurance layer. Eliminates subjective terminology and enforces explicit on-chain risk criteria.",
   "type": "object",
+
   "properties": {
-    "eventId": {
+    "riskEventId": {
       "type": "string",
-      "description": "Unique identifier for the risk event."
+      "description": "Unique identifier for this risk event."
     },
+
+    "businessId": {
+      "type": "string",
+      "description": "Business associated with the risk event."
+    },
+
     "timestamp": {
       "type": "string",
       "format": "date-time",
-      "description": "Time the risk event was detected."
+      "description": "UTC timestamp when the event was detected."
     },
-    "sourceSystem": {
-      "type": "string",
-      "description": "Which subsystem detected the risk (BRRMS, StripeAdapter, Orchestrator, SmartContractIndex, etc.)."
-    },
+
     "riskType": {
       "type": "string",
       "enum": [
+        "REVENUE_VARIANCE",
+        "COGS_VARIANCE",
+        "EXPENSE_VARIANCE",
+        "SETTLEMENT_FAILURE",
         "SMART_CONTRACT_FAILURE",
+        "API_FAILURE",
         "DATA_MISMATCH",
-        "PROCESSOR_DOWNTIME",
-        "GROSS_TO_NET_ANOMALY",
-        "UNUSUAL_REFUNDS",
-        "GOVERNANCE_DISPUTE",
-        "MEDICAL_PROVIDER_UNAVAILABLE",
-        "API_AUTH_FAILURE",
-        "HASH_MISMATCH",
-        "ORCHESTRATION_FAILURE"
+        "SECURITY_EVENT",
+        "SYSTEM_LATENCY_EXCEEDED",
+        "INSURANCE_TRIGGER_EVENT"
       ],
-      "description": "Category of risk detected."
+      "description": "Enumerated risk classification. No free-text or narratives permitted."
     },
-    "severity": {
-      "type": "string",
-      "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"],
-      "description": "Severity of the risk event."
+
+    "severityScore": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 10000,
+      "description": "Deterministic risk score expressed in basis points (0–10,000). No subjective severity labels allowed."
     },
-    "details": {
+
+    "thresholds": {
       "type": "object",
-      "description": "Additional metadata about the risk event.",
-      "additionalProperties": true
+      "description": "Explicit thresholds for severity classification.",
+      "properties": {
+        "minorBps": {
+          "type": "integer",
+          "description": "Basis point threshold for minor severity."
+        },
+        "majorBps": {
+          "type": "integer",
+          "description": "Basis point threshold for major severity."
+        }
+      },
+      "required": [
+        "minorBps",
+        "majorBps"
+      ]
     },
-    "requiresAction": {
-      "type": "boolean",
-      "description": "Indicates whether an insurance trigger or reserve action should occur."
+
+    "severityFlag": {
+      "type": "string",
+      "enum": [
+        "WITHIN_TOLERANCE",
+        "MINOR",
+        "MAJOR"
+      ],
+      "description": "Deterministic severity classification based solely on severityScore vs thresholds."
+    },
+
+    "insuranceAction": {
+      "type": "string",
+      "enum": [
+        "NONE",
+        "MONITOR",
+        "RESERVE_ADJUST",
+        "PAYOUT_RESTRICTION",
+        "INITIATE_PAYOUT",
+        "TRIGGER_REINSURANCE"
+      ],
+      "description": "Enumerated action taken by the insurance layer. No subjective judgment permitted."
+    },
+
+    "source": {
+      "type": "string",
+      "enum": [
+        "SYSTEM",
+        "SMART_CONTRACT",
+        "API",
+        "MANUAL_ENTRY"
+      ],
+      "description": "Origin of the risk event."
     }
   },
+
   "required": [
-    "eventId",
+    "riskEventId",
+    "businessId",
     "timestamp",
-    "sourceSystem",
     "riskType",
-    "severity",
-    "details"
-  ],
-  "additionalProperties": false
+    "severityScore",
+    "thresholds",
+    "severityFlag",
+    "insuranceAction",
+    "source"
+  ]
 }
