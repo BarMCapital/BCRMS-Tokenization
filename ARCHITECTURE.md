@@ -297,3 +297,122 @@ Secondary marketplace for revenue-share tokens
 Maintained by: BAR M Capital Engineering
 Architecture Lead: Peter Gonyeau
 Model Influences: IBM BCRMS, SEC compliance frameworks, hybrid on/off-chain financial systems
+
+BAR M Anti-Capacious Language Standard
+
+To protect the integrity of BAR M’s systems, contracts, automations, and smart-contract logic, all project components must comply with the following standard.
+
+This applies to:
+
+BRRMS schemas
+
+Smart contracts
+
+Workflows
+
+API adapters
+
+Insurance logic
+
+Governance documents
+
+Operational playbooks
+
+Contributor documentation
+
+1. No Subjective or Capacious Terms
+
+The following terms may not be used in the repo unless defined explicitly in the Controlled Vocabulary:
+
+reasonable
+
+appropriate
+
+necessary
+
+customary
+
+good faith
+
+fair
+
+substantial
+
+material
+
+significant
+
+acceptable
+
+practical
+
+best efforts
+
+adequate
+
+All logic must be objective, measurable, and rule-based.
+
+2. All Conditions Must Be Explicit
+
+Any condition that would normally rely on interpretation must instead be expressed as:
+
+thresholds
+
+numerical ranges
+
+formulas
+
+enumerated states
+
+timestamps
+
+Boolean flags
+
+event triggers
+
+explicit retry counts
+
+deterministic fallback paths
+
+Example:
+“material deviation” → “deviation exceeding 50 basis points relative to expected revenue.”
+
+3. BAR M Controls All Interpretive Authority
+
+Where interpretation cannot be avoided, the following rule applies:
+
+Interpretive authority for ambiguous terms rests exclusively with BAR M as defined in this architecture file and the controlled vocabulary.
+
+No external party, contractor, or downstream consumer may redefine operational terms.
+
+4. All New Logic Must Use the Controlled Vocabulary
+
+All new contributions must rely on the definitions found in:
+
+definitions/controlled_vocabulary.json
+
+If a concept is not defined there, it must be added before use.
+
+5. All Governance, Settlement, and Risk Logic Must Be Deterministic
+
+All system components—including settlement, auditing, token issuance, insurance triggers, and investor dashboards—must operate using deterministic conditions, not narrative language.
+
+No step in the codebase may require human interpretation to execute.
+
+6. Pull Requests Are Rejected If They Contain Banned Terms
+
+GitHub Actions may enforce this standard by scanning for prohibited language in:
+
+.md files
+
+.json schemas
+
+smart-contract files
+
+workflow definitions
+
+Any PR containing banned terms must fail CI until corrected.
+
+7. This Standard Overrides All Prior Language
+
+If any existing file conflicts with this standard, the Anti-Capacious Language Standard controls.
