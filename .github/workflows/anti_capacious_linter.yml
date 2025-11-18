@@ -1,0 +1,51 @@
+name: Anti-Capacious Linter
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Scan for ambiguous or banned terms
+        run: |
+          echo "Running Anti-Capacious Language Scan..."
+          BANNED_PATTERNS=(
+            "reasonable"
+            "appropriate"
+            "necessary"
+            "customary"
+            "material"
+            "substantial"
+            "good faith"
+            "fair "
+            "approximate"
+            "typically"
+            "as needed"
+            "if necessary"
+            "at discretion"
+          )
+
+          FILE_TYPES="*.sol *.json *.md *.yml *.yaml *.js *.ts"
+
+          FAIL=0
+
+          for pattern in "${BANNED_PATTERNS[@]}"; do
+            MATCHES=$(grep -Rin --include=\*.{sol,json,md,yml,yaml,js,ts} "$pattern" . || true)
+            if [ ! -z "$MATCHES" ]; then
+              echo "::error::Found banned term '$pattern'"
+              echo "$MATCHES"
+              FAIL=1
+            fi
+          done
+
+          if [ "$FAIL" -eq 1 ]; then
+            echo "::error::Anti-Capacious Linter failed. Remove ambiguous terms before committing."
+            exit 1
+          else
+            echo "No banned terms detected. Linter passed."
+          fi
