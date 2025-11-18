@@ -68,6 +68,6 @@
   "notes": [
     "No new terms may be introduced without adding them to this file.",
     "All schemas, smart contracts, and workflows must reference these definitions.",
-    "Ambiguous language (reasonable, appropriate, material, etc.) is prohibited unless explicitly defined here."
-  ]
-}
+    "Ambiguous language (see banned-terms list) is prohibited unless explicitly defined here."
+    ]
+  }
