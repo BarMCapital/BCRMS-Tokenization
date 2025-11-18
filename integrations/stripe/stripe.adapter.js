@@ -57,7 +57,7 @@ function buildDailyRevenueRecord({
   let grossRevenue = 0;
   let refunds = 0;
   let chargebacks = 0; // Placeholder for future use if chargeback data is provided
-  let cashSales = 0;   // Stripe typically represents card/digital, so this defaults to 0
+  let cashSales = 0;   // Deterministic default: Stripe events include only card/digital transactions unless cash is reported separately.
   let cardSales = 0;
 
   chargesForDate.forEach((charge) => {
