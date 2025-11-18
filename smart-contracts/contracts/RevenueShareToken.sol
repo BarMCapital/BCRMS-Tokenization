@@ -5,22 +5,23 @@ pragma solidity ^0.8.17;
  * @title RevenueShareToken
  * @author BAR M Capital
  *
- * @notice Simple ERC20-style token representing a pro-rata share of a
- *         BAR M Capital revenue stream.
+ * @notice ERC20-style token representing fractional units of a defined BAR M
+ *         revenue stream. This contract is deterministic and contains no
+ *         subjective branching, consistent with BAR M's Anti-Capacious
+ *         Language Standard.
  *
- * This is a minimal, non-production stub designed to:
- *  - Represent fractional ownership
- *  - Be extendable with compliance logic (whitelisting, transfer rules)
- *  - Integrate with RevenueAnchor and off-chain BRRMS calculations
+ * Core purposes:
+ *  - Represent fractional ownership units of a specified revenue pool.
+ *  - Allow deterministic transfer, approval, and balance tracking.
+ *  - Provide a stable interface for off-chain BRRMS-based distribution engines
+ *    and on-chain anchoring via RevenueAnchor.
  *
- * In a future phase this contract will:
- *  - Enforce transfer restrictions (Reg D / Reg CF, etc.)
- *  - Integrate with a distribution engine that uses BRRMS netRevenue
- *  - Emit events that off-chain services use to push stablecoins or fiat
+ * Compliance, offering-specific rules, and payout mechanics are handled by
+ * dedicated modules or off-chain services that consume BRRMS outputs and
+ * anchored hashes. This contract does not make regulatory judgments.
  */
-
 contract RevenueShareToken {
-    // Basic token metadata
+    // Basic token metadata (immutable after deployment)
     string public name = "BAR M Revenue Share Token";
     string public symbol = "BRST";
     uint8 public decimals = 18;
@@ -31,100 +32,115 @@ contract RevenueShareToken {
     // Owner / admin address (e.g., BAR M Capital or an offering SPV)
     address public owner;
 
-    // Balances and allowances
+    // Balances and allowances (standard ERC20-style mappings)
     mapping(address => uint256) private balances;
     mapping(address => mapping(address => uint256)) private allowances;
 
-    // Events
+    // Events: deterministic state transitions only
     event Transfer(address indexed from, address indexed to, uint256 value);
-    event Approval(address indexed owner, address indexed spender, uint256 value);
+    event Approval(address indexed tokenOwner, address indexed spender, uint256 value);
     event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
 
     modifier onlyOwner() {
-        require(msg.sender == owner, "Not authorized");
+        require(msg.sender == owner, "NOT_OWNER");
         _;
     }
 
+    /**
+     * @notice Sets the initial owner. No tokens are minted at deployment.
+     */
     constructor() {
         owner = msg.sender;
         emit OwnershipTransferred(address(0), msg.sender);
     }
 
-    // --- ERC20-style core functions ---
-
+    /**
+     * @notice Returns the token balance of a given account.
+     * @param account Address to query.
+     */
     function balanceOf(address account) external view returns (uint256) {
         return balances[account];
     }
 
-    function transfer(address to, uint256 amount) external returns (bool) {
-        _transfer(msg.sender, to, amount);
-        return true;
-    }
-
-    function approve(address spender, uint256 amount) external returns (bool) {
-        allowances[msg.sender][spender] = amount;
-        emit Approval(msg.sender, spender, amount);
-        return true;
-    }
-
+    /**
+     * @notice Returns the remaining number of tokens that `spender`
+     *         is allowed to spend on behalf of `tokenOwner`.
+     */
     function allowance(address tokenOwner, address spender) external view returns (uint256) {
         return allowances[tokenOwner][spender];
     }
 
-    function transferFrom(address from, address to, uint256 amount) external returns (bool) {
-        uint256 currentAllowance = allowances[from][msg.sender];
-        require(currentAllowance >= amount, "Allowance exceeded");
-
-        allowances[from][msg.sender] = currentAllowance - amount;
-        _transfer(from, to, amount);
+    /**
+     * @notice Transfers tokens to a specified address.
+     * @param to Recipient address.
+     * @param value Amount of tokens to transfer.
+     */
+    function transfer(address to, uint256 value) external returns (bool) {
+        _transfer(msg.sender, to, value);
         return true;
     }
 
-    // --- Minting / admin controls ---
-
     /**
-     * @notice Mint new tokens to a recipient.
-     * In a real offering, this would only be called during the raise process
-     * as investors purchase revenue-share tokens.
+     * @notice Approves `spender` to spend `value` tokens on behalf of caller.
+     * @param spender Address allowed to spend.
+     * @param value Amount approved.
      */
-    function mint(address to, uint256 amount) external onlyOwner {
-        require(to != address(0), "Invalid address");
-        totalSupply += amount;
-        balances[to] += amount;
-        emit Transfer(address(0), to, amount);
+    function approve(address spender, uint256 value) external returns (bool) {
+        allowances[msg.sender][spender] = value;
+        emit Approval(msg.sender, spender, value);
+        return true;
     }
 
     /**
-     * @notice Burn tokens from a holder (e.g., buyback, redemption).
+     * @notice Transfers tokens from `from` to `to` using an existing allowance.
+     * @param from Source address.
+     * @param to Destination address.
+     * @param value Amount of tokens to transfer.
      */
-    function burn(address from, uint256 amount) external onlyOwner {
-        require(from != address(0), "Invalid address");
-        require(balances[from] >= amount, "Insufficient balance");
+    function transferFrom(address from, address to, uint256 value) external returns (bool) {
+        uint256 currentAllowance = allowances[from][msg.sender];
+        require(currentAllowance >= value, "ALLOWANCE_EXCEEDED");
 
-        balances[from] -= amount;
-        totalSupply -= amount;
-        emit Transfer(from, address(0), amount);
+        allowances[from][msg.sender] = currentAllowance - value;
+        _transfer(from, to, value);
+        return true;
     }
 
     /**
-     * @notice Transfer ownership of the token contract (e.g., to a DAO or SPV).
+     * @notice Internal transfer function with deterministic checks only.
+     */
+    function _transfer(address from, address to, uint256 value) internal {
+        require(to != address(0), "ZERO_ADDRESS");
+        require(balances[from] >= value, "INSUFFICIENT_BALANCE");
+
+        balances[from] -= value;
+        balances[to] += value;
+
+        emit Transfer(from, to, value);
+    }
+
+    /**
+     * @notice Mints new tokens to a specified address.
+     * @dev Restricted to owner. Intended to align with off-chain offering logic
+     *      and BRRMS-defined cap tables.
+     * @param to Recipient of the minted tokens.
+     * @param value Amount of tokens to mint.
+     */
+    function mint(address to, uint256 value) external onlyOwner {
+        require(to != address(0), "ZERO_ADDRESS");
+        totalSupply += value;
+        balances[to] += value;
+        emit Transfer(address(0), to, value);
+    }
+
+    /**
+     * @notice Transfers ownership to a new address.
+     * @param newOwner New owner address.
      */
     function transferOwnership(address newOwner) external onlyOwner {
-        require(newOwner != address(0), "Invalid new owner");
-        emit OwnershipTransferred(owner, newOwner);
+        require(newOwner != address(0), "ZERO_ADDRESS");
+        address previousOwner = owner;
         owner = newOwner;
-    }
-
-    // --- Internal helpers ---
-
-    function _transfer(address from, address to, uint256 amount) internal {
-        require(from != address(0), "From address invalid");
-        require(to != address(0), "To address invalid");
-        require(balances[from] >= amount, "Insufficient balance");
-
-        balances[from] -= amount;
-        balances[to] += amount;
-
-        emit Transfer(from, to, amount);
+        emit OwnershipTransferred(previousOwner, newOwner);
     }
 }
