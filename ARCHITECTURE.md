@@ -322,21 +322,22 @@ Contributor documentation
 
 1. No Subjective or Capacious Terms
 
-The following terms may not be used directly in the repo unless they are explicitly defined in the Controlled Vocabulary:
+The following term categories may not be used directly in the repo unless explicitly defined in the Controlled Vocabulary:
 
-- `[REASONABLE_TERM]`
-- `[APPROPRIATE_TERM]`
-- `[NECESSARY_TERM]`
-- `[CUSTOMARY_TERM]`
-- `[GOOD_FAITH_TERM]`
-- `[FAIR_TERM]`
-- `[SUBSTANTIAL_TERM]`
-- `[MATERIAL_TERM]`
-- `[SIGNIFICANT_TERM]`
-- `[ACCEPTABLE_TERM]`
-- `[PRACTICAL_TERM]`
-- `[BEST_EFFORTS_TERM]`
-- `[ADEQUATE_TERM]`
+- `[BANNED_CONCEPT_01]`
+- `[BANNED_CONCEPT_02]`
+- `[BANNED_CONCEPT_03]`
+- `[BANNED_CONCEPT_04]`
+- `[BANNED_CONCEPT_05]`
+- `[BANNED_CONCEPT_06]`
+- `[BANNED_CONCEPT_07]`
+- `[BANNED_CONCEPT_08]`
+- `[BANNED_CONCEPT_09]`
+- `[BANNED_CONCEPT_10]`
+- `[BANNED_CONCEPT_11]`
+- `[BANNED_CONCEPT_12]`
+- `[BANNED_CONCEPT_13]`
+
 
 
 All logic must be objective, measurable, and rule-based.
@@ -364,7 +365,8 @@ explicit retry counts
 deterministic fallback paths
 
 Example:
-`[MATERIAL_DEVIATION]` → “deviation exceeding 50 basis points relative to expected revenue.”
+`[DEVIATION_EXAMPLE_01]`
+ → “deviation exceeding 50 basis points relative to expected revenue.”
 
 
 3. BAR M Controls All Interpretive Authority
