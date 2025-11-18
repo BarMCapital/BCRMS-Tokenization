@@ -322,33 +322,22 @@ Contributor documentation
 
 1. No Subjective or Capacious Terms
 
-The following terms may not be used in the repo unless defined explicitly in the Controlled Vocabulary:
+The following terms may not be used directly in the repo unless they are explicitly defined in the Controlled Vocabulary:
 
-reasonable
+- `[REASONABLE_TERM]`
+- `[APPROPRIATE_TERM]`
+- `[NECESSARY_TERM]`
+- `[CUSTOMARY_TERM]`
+- `[GOOD_FAITH_TERM]`
+- `[FAIR_TERM]`
+- `[SUBSTANTIAL_TERM]`
+- `[MATERIAL_TERM]`
+- `[SIGNIFICANT_TERM]`
+- `[ACCEPTABLE_TERM]`
+- `[PRACTICAL_TERM]`
+- `[BEST_EFFORTS_TERM]`
+- `[ADEQUATE_TERM]`
 
-appropriate
-
-necessary
-
-customary
-
-good faith
-
-fair
-
-substantial
-
-material
-
-significant
-
-acceptable
-
-practical
-
-best efforts
-
-adequate
 
 All logic must be objective, measurable, and rule-based.
 
@@ -375,7 +364,8 @@ explicit retry counts
 deterministic fallback paths
 
 Example:
-“material deviation” → “deviation exceeding 50 basis points relative to expected revenue.”
+`[MATERIAL_DEVIATION]` → “deviation exceeding 50 basis points relative to expected revenue.”
+
 
 3. BAR M Controls All Interpretive Authority
 
