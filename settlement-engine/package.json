@@ -5,7 +5,8 @@
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js", 
-    "admin:redeem": "node scripts/adminProcessRedemption.js"
+    "admin:redeem": "node scripts/adminProcessRedemption.js",
+    "ingest": "node brRMS/ingestion/runIngest.js"
   },
   "dependencies": {
     "ethers": "^6.13.1",
