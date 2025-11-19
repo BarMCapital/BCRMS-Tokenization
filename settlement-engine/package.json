@@ -1,0 +1,15 @@
+{
+  "name": "bar-m-settlement-engine",
+  "version": "1.0.0",
+  "description": "Off-chain settlement listener for BAR M revenue redemption events.",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js", 
+    "admin:redeem": "node scripts/adminProcessRedemption.js",
+    "ingest": "node brRMS/ingestion/runIngest.js"
+  },
+  "dependencies": {
+    "ethers": "^6.13.1",
+    "dotenv": "^16.4.5"
+  }
+}

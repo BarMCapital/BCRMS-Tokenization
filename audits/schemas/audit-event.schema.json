@@ -1,0 +1,110 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "BRRMS Audit Event Schema",
+  "description": "Deterministic audit event structure for BAR M BRRMS. Eliminates subjective or capacious terminology and enforces explicit verification conditions.",
+  "type": "object",
+
+  "properties": {
+    "auditEventId": {
+      "type": "string",
+      "description": "Unique identifier for this audit event."
+    },
+
+    "businessId": {
+      "type": "string",
+      "description": "ID of the business this audit event applies to."
+    },
+
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "UTC timestamp when the audit event occurred."
+    },
+
+    "eventType": {
+      "type": "string",
+      "enum": [
+        "REVENUE_VERIFICATION",
+        "COGS_VERIFICATION",
+        "EXPENSE_VERIFICATION",
+        "VARIANCE_THRESHOLD_EXCEEDED",
+        "SETTLEMENT_CONFIRMATION",
+        "SYSTEM_ERROR",
+        "DATA_MISMATCH",
+        "SMART_CONTRACT_FAILURE",
+        "MANUAL_REVIEW_TRIGGERED",
+        "INSURANCE_TRIGGER_EVENT"
+      ],
+      "description": "Enumerated type of audit event. No free-text or interpretive labels permitted."
+    },
+
+    "source": {
+      "type": "string",
+      "enum": [
+        "SYSTEM",
+        "API",
+        "SMART_CONTRACT",
+        "MANUAL_REVIEW"
+      ],
+      "description": "Enumerated origin of the audit event."
+    },
+
+    "expectedValue": {
+      "type": "number",
+      "description": "Deterministic expected value for the event (revenue, cost, or expense) when applicable."
+    },
+
+    "actualValue": {
+      "type": "number",
+      "description": "Actual value measured or imported for the event when applicable."
+    },
+
+    "deltaBasisPoints": {
+      "type": "integer",
+      "description": "Numeric difference between expectedValue and actualValue in basis points."
+    },
+
+    "varianceFlag": {
+      "type": "string",
+      "enum": [
+        "WITHIN_TOLERANCE",
+        "MINOR_VARIANCE",
+        "MAJOR_VARIANCE"
+      ],
+      "description": "Deterministic variance classification based purely on deltaBasisPoints thresholds."
+    },
+
+    "auditState": {
+      "type": "string",
+      "enum": [
+        "PENDING",
+        "VERIFIED",
+        "FAILED",
+        "FLAGGED_FOR_REVIEW"
+      ],
+      "description": "Deterministic audit state. No subjective qualifiers allowed."
+    },
+
+    "resolutionAction": {
+      "type": "string",
+      "enum": [
+        "NONE",
+        "RETRY",
+        "ESCALATE",
+        "SETTLE",
+        "TRIGGER_INSURANCE",
+        "SMART_CONTRACT_ROLLBACK"
+      ],
+      "description": "Explicit resolution action taken as a result of this audit event."
+    }
+  },
+
+  "required": [
+    "auditEventId",
+    "businessId",
+    "timestamp",
+    "eventType",
+    "source",
+    "auditState"
+  ]
+}

@@ -1,0 +1,125 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "BRRMS Expense Record Schema",
+  "description": "Deterministic expense structure for BAR M BRRMS. Eliminates all subjective or capacious terminology.",
+  "type": "object",
+
+  "properties": {
+    "expenseId": {
+      "type": "string",
+      "description": "Unique identifier for this expense record."
+    },
+
+    "businessId": {
+      "type": "string",
+      "description": "BAR M business identifier."
+    },
+
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "UTC timestamp for when the expense was incurred or logged."
+    },
+
+    "category": {
+      "type": "string",
+      "enum": [
+        "RENT",
+        "UTILITIES",
+        "MARKETING",
+        "INSURANCE",
+        "PAYROLL",
+        "SOFTWARE",
+        "MAINTENANCE",
+        "LEGAL_FEES",
+        "ACCOUNTING",
+        "TAXES",
+        "LOAN_PAYMENT",
+        "INTEREST",
+        "SUBSCRIPTION",
+        "OTHER_OPERATING"
+      ],
+      "description": "Enumerated category for deterministic expense classification."
+    },
+
+    "amount": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Exact expense amount in USD."
+    },
+
+    "expectedAmount": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Deterministic expected amount for this category based on formula or historical benchmark."
+    },
+
+    "deltaBasisPoints": {
+      "type": "integer",
+      "description": "Difference between amount and expectedAmount expressed in basis points."
+    },
+
+    "varianceFlag": {
+      "type": "string",
+      "enum": [
+        "WITHIN_TOLERANCE",
+        "MINOR_VARIANCE",
+        "MAJOR_VARIANCE"
+      ],
+      "description": "Variance classification based on deltaBasisPoints thresholds. No subjective terms allowed."
+    },
+
+    "varianceThresholds": {
+      "type": "object",
+      "description": "Explicit thresholds defining minor and major variance.",
+      "properties": {
+        "minorVarianceBps": {
+          "type": "integer"
+        },
+        "majorVarianceBps": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "minorVarianceBps",
+        "majorVarianceBps"
+      ]
+    },
+
+    "source": {
+      "type": "string",
+      "enum": [
+        "API_IMPORT",
+        "MANUAL_ENTRY",
+        "SYSTEM_GENERATED",
+        "SMART_CONTRACT_EVENT"
+      ],
+      "description": "Enumerated origin of the expense record."
+    },
+
+    "auditState": {
+      "type": "string",
+      "enum": [
+        "PENDING",
+        "VERIFIED",
+        "FLAGGED",
+        "FAILED_VERIFICATION"
+      ],
+      "description": "Deterministic audit status for BRRMS audit workflows."
+    }
+  },
+
+  "required": [
+    "expenseId",
+    "businessId",
+    "timestamp",
+    "category",
+    "amount",
+    "expectedAmount",
+    "deltaBasisPoints",
+    "varianceFlag",
+    "varianceThresholds",
+    "source",
+    "auditState"
+  ]
+}

@@ -1,0 +1,1 @@
+Mock ingestion source folder.

@@ -1,0 +1,103 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "BRRMS Revenue Event Schema",
+  "description": "Deterministic revenue event structure for BAR M BRRMS. No subjective or capacious terminology permitted.",
+  "type": "object",
+
+  "properties": {
+    "eventId": {
+      "type": "string",
+      "description": "Unique identifier for the revenue event."
+    },
+
+    "businessId": {
+      "type": "string",
+      "description": "ID of the business producing the revenue."
+    },
+
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "UTC timestamp when revenue event occurred."
+    },
+
+    "grossRevenue": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Total unadjusted revenue for the event in USD."
+    },
+
+    "netRevenue": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Revenue after fees or deductions explicitly defined in contract logic."
+    },
+
+    "expectedRevenue": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Deterministic expected revenue value calculated by BRRMS formula. Not a subjective projection."
+    },
+
+    "deltaBasisPoints": {
+      "type": "integer",
+      "description": "Difference between expected and net revenue expressed in basis points (1 bps = 0.01%)."
+    },
+
+    "varianceFlag": {
+      "type": "string",
+      "enum": [
+        "WITHIN_TOLERANCE",
+        "MINOR_VARIANCE",
+        "MAJOR_VARIANCE"
+      ],
+      "description": "Enumerated variance classification based solely on deltaBasisPoints thresholds."
+    },
+
+    "varianceThresholds": {
+      "type": "object",
+      "description": "Explicit thresholds for deterministic variance classification.",
+      "properties": {
+        "minorVarianceBps": {
+          "type": "integer",
+          "description": "Delta basis points threshold for minor variance."
+        },
+        "majorVarianceBps": {
+          "type": "integer",
+          "description": "Delta basis points threshold for major variance."
+        }
+      },
+      "required": [
+        "minorVarianceBps",
+        "majorVarianceBps"
+      ]
+    },
+
+    "settlementState": {
+      "type": "string",
+      "enum": [
+        "PENDING",
+        "SETTLED",
+        "FAILED",
+        "RETRYING",
+        "FLAGGED_FOR_REVIEW"
+      ],
+      "description": "Enumerated state for deterministic settlement logic. No subjective labels allowed."
+    }
+  },
+
+  "required": [
+    "eventId",
+    "businessId",
+    "timestamp",
+    "grossRevenue",
+    "netRevenue",
+    "expectedRevenue",
+    "deltaBasisPoints",
+    "varianceFlag",
+    "varianceThresholds",
+    "settlementState"
+  ]
+}
+
+

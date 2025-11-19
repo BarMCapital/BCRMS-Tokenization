@@ -1,0 +1,73 @@
+{
+  "version": "1.0.0",
+  "description": "BAR M Controlled Vocabulary. All deterministic system components must use these definitions and enumerations. No subjective or capacious terminology allowed.",
+
+  "terms": {
+    "basisPoint": {
+      "definition": "One hundredth of one percent (0.01%). All variances and risk scores shall be expressed in basis points.",
+      "type": "numeric"
+    },
+
+    "timestampUTC": {
+      "definition": "ISO 8601 UTC timestamp used for all BRRMS events.",
+      "type": "temporal"
+    },
+
+    "varianceFlag": {
+      "definition": "Deterministic classification of deviation based on explicit basis point thresholds.",
+      "enum": [
+        "WITHIN_TOLERANCE",
+        "MINOR_VARIANCE",
+        "MAJOR_VARIANCE"
+      ]
+    },
+
+    "severityFlag": {
+      "definition": "Deterministic classification of insurance-layer risk severity.",
+      "enum": [
+        "WITHIN_TOLERANCE",
+        "MINOR",
+        "MAJOR"
+      ]
+    },
+
+    "auditState": {
+      "definition": "Deterministic audit state. No subjective qualifiers permitted.",
+      "enum": [
+        "PENDING",
+        "VERIFIED",
+        "FAILED",
+        "FLAGGED_FOR_REVIEW"
+      ]
+    },
+
+    "settlementState": {
+      "definition": "Deterministic state for revenue settlement workflows.",
+      "enum": [
+        "PENDING",
+        "SETTLED",
+        "FAILED",
+        "RETRYING",
+        "FLAGGED_FOR_REVIEW"
+      ]
+    },
+
+    "insuranceAction": {
+      "definition": "Enumerated actions taken by the insurance layer.",
+      "enum": [
+        "NONE",
+        "MONITOR",
+        "RESERVE_ADJUST",
+        "PAYOUT_RESTRICTION",
+        "INITIATE_PAYOUT",
+        "TRIGGER_REINSURANCE"
+      ]
+    }
+  },
+
+  "notes": [
+    "No new terms may be introduced without adding them to this file.",
+    "All schemas, smart contracts, and workflows must reference these definitions.",
+    "Ambiguous language (see banned-terms list) is prohibited unless explicitly defined here."
+    ]
+  }

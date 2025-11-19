@@ -1,0 +1,56 @@
+# orchestration/daily-stripe-workflow.yaml
+# BAR M Capital - Daily Stripe Ingestion Workflow
+# ------------------------------------------------
+# This workflow describes the orchestration logic for:
+#   1. Retrieving Stripe transactions for the target date
+#   2. Passing the data through the Stripe → BRRMS adapter
+#   3. Saving the BRRMS revenue record
+#   4. Generating a cryptographic hash for anchoring
+#   5. Triggering downstream smart-contract distribution logic (future phase)
+
+workflow:
+  name: "daily_stripe_ingestion"
+  description: "Daily ingestion of Stripe transactions into BRRMS."
+  enabled: true
+  schedule: "0 2 * * *"   # Runs every day at 2am (UTC)
+
+steps:
+  - id: fetch_stripe_transactions
+    description: "Retrieve Stripe charges and fee summaries for target date."
+    type: integration
+    system: "Stripe"
+    module: "integrations/stripe/stripe.adapter.js"
+    function: "buildDailyRevenueRecord"
+    outputs:
+      - charges
+      - feeSummary
+
+  - id: normalize_to_brrms
+    description: "Convert raw Stripe data into normalized BRRMS revenue record."
+    type: transformation
+    inputFrom: fetch_stripe_transactions
+    outputFile: "brRMS/daily-revenue/{{date}}.json"
+
+  - id: generate_event_hash
+    description: "Produce a cryptographic hash of the normalized BRRMS record."
+    type: hashing
+    inputFile: "brRMS/daily-revenue/{{date}}.json"
+    outputFile: "brRMS/hashes/{{date}}.hash"
+
+  - id: anchor_hash_onchain
+    description: "Anchor the event hash to the blockchain for immutability."
+    type: blockchain
+    smartContract: "smart-contracts/contracts/RevenueAnchor.sol"
+    method: "recordHash"
+    inputFrom: generate_event_hash
+
+  - id: notify_distribution_engine
+    description: "Trigger smart-contract-based distribution logic (future)."
+    type: orchestration
+    enabled: false  # Will be activated during MVP phase
+    dependsOn: anchor_hash_onchain
+
+metadata:
+  version: "1.0"
+  author: "BAR M Capital Engineering"
+  created: "2025-11-15"
