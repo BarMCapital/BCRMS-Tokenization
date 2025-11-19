@@ -1,0 +1,24 @@
+{
+  "revenue": {
+    "businessId": "B001",
+    "month": "2025-01",
+    "revenue": 12000,
+    "refunds": 500
+  },
+  "cogs": {
+    "businessId": "B001",
+    "month": "2025-01",
+    "cogsItems": [
+      { "sku": "NAD100", "description": "NAD kits", "cost": 800 },
+      { "sku": "PEP001", "cost": 400 }
+    ]
+  },
+  "expenses": {
+    "businessId": "B001",
+    "month": "2025-01",
+    "expenseItems": [
+      { "category": "rent", "cost": 3000 },
+      { "category": "utilities", "cost": 700 }
+    ]
+  }
+}
