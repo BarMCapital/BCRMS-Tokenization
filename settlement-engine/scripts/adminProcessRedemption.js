@@ -13,6 +13,8 @@ const { getNAVForBusiness } = require("../nav");
 const { loadRedemptionContract } = require("../contracts");
 const storage = require("../storage");
 const payout = require("../payout");
+const { getInsuranceAdjustment } = require("../insurance");
+
 
 // Hard-coded fund parameters (already committed)
 const FUNDS = {
@@ -66,6 +68,24 @@ async function main() {
 
   console.log("\nRedemption Result:");
   console.log(JSON.stringify(redemptionResult, null, 2));
+  // === Insurance Adjustment Hook ===
+console.log("\n[Insurance] Evaluating business insurance risk…");
+
+const insurance = getInsuranceAdjustment(businessId);
+
+console.log("[Insurance] Risk Adjustment Factors:");
+console.log(JSON.stringify(insurance, null, 2));
+
+// Compute adjusted redemption value
+const adjustedValue =
+  redemptionResult.redemptionValue * insurance.adjustmentMultiplier;
+
+redemptionResult.adjustedRedemptionValue = adjustedValue;
+
+console.log(
+  `\n[Insurance] Adjusted redemption value (post-insurance): ${adjustedValue}`
+);
+
 
   // 4. Write audit snapshot
   console.log("\n[4] Writing audit snapshot...");
